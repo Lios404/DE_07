@@ -1,4 +1,8 @@
 venv/
 .env
 *.BIN
-__pycache__/
+products_raw.jsonl
+failed_products.csv
+crawl_log.log
+product_urls_to_crawl.csv
+ip_locations.csv
