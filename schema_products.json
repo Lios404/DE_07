@@ -1,0 +1,24 @@
+[
+  {"name": "product_id", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "source_url", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "domain_used", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "name", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "sku", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "attribute_set", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "type_id", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "price", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "min_price", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "max_price", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "min_price_format", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "max_price_format", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "gold_weight", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "collection", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "collection_id", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "product_type", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "category", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "category_name", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "store_code", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "gender", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "massiv", "type": "STRING", "mode": "NULLABLE"}
+]
+
