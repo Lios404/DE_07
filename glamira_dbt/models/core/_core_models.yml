@@ -1,0 +1,66 @@
+version: 2
+models:
+  - name: dim_date
+    columns:
+      - name: date_key
+        tests: [unique, not_null]
+  - name: dim_customer
+    columns:
+      - name: customer_key
+        tests: [unique, not_null]
+  - name: dim_product
+    columns:
+      - name: product_key
+        tests: [unique, not_null]
+  - name: dim_location
+    columns:
+      - name: location_key
+        tests: [unique, not_null]
+  - name: dim_currency
+    columns:
+      - name: currency_key
+        tests: [unique, not_null]
+      - name: currency_code
+        tests: [not_null]
+  - name: dim_store
+    columns:
+      - name: store_key
+        tests: [unique, not_null]
+  - name: fact_exchange_rate
+    columns:
+      - name: exchange_rate_key
+        tests: [unique, not_null]
+      - name: rate_to_usd
+        tests: [not_null]
+  - name: fact_sales_order_detail
+    columns:
+      - name: detail_key
+        tests: [unique, not_null]
+      - name: date_key
+        tests:
+          - not_null
+          - relationships: {to: ref('dim_date'), field: date_key}
+      - name: customer_key
+        tests:
+          - not_null
+          - relationships: {to: ref('dim_customer'), field: customer_key}
+      - name: product_key
+        tests: [not_null]
+      - name: location_key
+        tests:
+          - not_null
+          - relationships: {to: ref('dim_location'), field: location_key}
+      - name: currency_key
+        tests:
+          - not_null
+          - relationships: {to: ref('dim_currency'), field: currency_key}
+      - name: store_key
+        tests:
+          - not_null
+          - relationships: {to: ref('dim_store'), field: store_key}
+      - name: sales_amount
+        tests: [not_null]
+      - name: sales_local_price
+        tests: [not_null]
+      - name: sales_usd_price
+        tests: [not_null]

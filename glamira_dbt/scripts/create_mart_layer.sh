@@ -1,0 +1,75 @@
+#!/bin/bash
+set -e
+
+cd ~/glamira-pipeline/glamira_dbt
+mkdir -p models/mart
+
+cat > models/mart/mart_sales_order_detail.sql << 'EOF'
+{{ config(materialized='table') }}
+
+with fact as (
+    select * from {{ ref('fact_sales_order_detail') }}
+),
+d as (select * from {{ ref('dim_date') }}),
+p as (select * from {{ ref('dim_product') }}),
+l as (select * from {{ ref('dim_location') }}),
+cur as (select * from {{ ref('dim_currency') }}),
+s as (select * from {{ ref('dim_store') }})
+
+select
+    f.detail_key,
+    f.order_id,
+    f.timestamp as order_timestamp,
+
+    -- Time-based trends
+    d.full_date,
+    d.year_number,
+    d.quarter_number,
+    d.month_number,
+    d.month_name,
+    d.day_name,
+    d.is_weekend,
+
+    -- Product performance
+    p.product_id,
+    p.product_name,
+    p.product_sku,
+    p.product_gender,
+
+    -- Geographic distribution
+    l.location_city_name,
+    l.location_region_name,
+    l.location_country_name,
+    l.location_country_code,
+
+    -- Store / currency context
+    s.store_domain,
+    cur.currency_code,
+
+    -- Customer (khong lo email/PII, chi giu key giu danh)
+    f.customer_key,
+
+    -- Revenue analysis (measures)
+    f.sales_amount,
+    f.sales_local_price,
+    f.sales_usd_price,
+    f.sales_amount * f.sales_usd_price as total_revenue_usd
+
+from fact f
+left join d on d.date_key = f.date_key
+left join p on p.product_key = f.product_key
+left join l on l.location_key = f.location_key
+left join cur on cur.currency_key = f.currency_key
+left join s on s.store_key = f.store_key
+EOF
+
+cat > models/mart/schema.yml << 'EOF'
+version: 2
+models:
+  - name: mart_sales_order_detail
+    columns:
+      - name: detail_key
+        tests: [unique, not_null]
+EOF
+
+echo "Da tao mart layer. Chay: dbt build --select mart_sales_order_detail"

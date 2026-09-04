@@ -1,0 +1,9 @@
+version: 2
+sources:
+  - name: raw_glamira
+    database: glamira-data-project-502506
+    schema: raw_glamira
+    tables:
+      - name: raw_summary
+      - name: raw_ip_location
+      - name: raw_products

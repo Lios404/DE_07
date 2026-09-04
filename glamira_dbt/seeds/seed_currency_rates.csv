@@ -1,0 +1,36 @@
+currency_symbol,currency_code,currency_name,rate_to_usd
+€,EUR,Euro,1.10
+£,GBP,British Pound,1.27
+kr,SEK,Swedish Krona,0.095
+$,USD,US Dollar,1.0
+CHF,CHF,Swiss Franc,1.12
+AU $,AUD,Australian Dollar,0.65
+CAD $,CAD,Canadian Dollar,0.74
+Kč,CZK,Czech Koruna,0.044
+Ft,HUF,Hungarian Forint,0.0028
+zł,PLN,Polish Zloty,0.25
+MXN $,MXN,Mexican Peso,0.058
+SGD $,SGD,Singapore Dollar,0.74
+CLP,CLP,Chilean Peso,0.0011
+лв.,BGN,Bulgarian Lev,0.56
+kn,HRK,Croatian Kuna,0.15
+NZD $,NZD,New Zealand Dollar,0.61
+₺,TRY,Turkish Lira,0.03
+COP $,COP,Colombian Peso,0.00025
+PEN S/.,PEN,Peruvian Sol,0.27
+₱,PHP,Philippine Peso,0.018
+ din.,RSD,Serbian Dinar,0.0093
+₫,VND,Vietnamese Dong,0.00004
+HKD $,HKD,Hong Kong Dollar,0.13
+Lei,RON,Romanian Leu,0.22
+GTQ Q,GTQ,Guatemalan Quetzal,0.13
+USD $,USD,US Dollar,1.0
+CRC ₡,CRC,Costa Rican Colon,0.0019
+￥,JPY,Japanese Yen,0.0067
+₹,INR,Indian Rupee,0.012
+UYU,UYU,Uruguayan Peso,0.025
+₲,PYG,Paraguayan Guarani,0.00013
+DOP $,DOP,Dominican Peso,0.017
+BOB Bs,BOB,Bolivian Boliviano,0.145
+R$,BRL,Brazilian Real,0.18
+د.ك.‏,KWD,Kuwaiti Dinar,3.26

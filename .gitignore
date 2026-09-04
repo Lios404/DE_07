@@ -1,3 +1,6 @@
+dbt-env/
+logs/
+*.log
 venv/
 .env
 *.BIN
