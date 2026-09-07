@@ -25,7 +25,7 @@ select
 
     -- Product performance
     p.product_id,
-    p.product_name,
+    coalesce(p.product_name,'Not In Catalog') as product_name,
     p.product_sku,
     p.product_gender,
 
@@ -44,10 +44,9 @@ select
 
     -- Revenue analysis (measures)
     f.sales_amount,
-    f.sales_local_price,
-    f.sales_usd_price,
-    f.sales_amount * f.sales_usd_price as total_revenue_usd
-
+    cast(f.sales_local_price as float64) as sales_local_price,
+    cast(f.sales_usd_price as float64) as sales_usd_price,
+    cast(f.sales_amount * f.sales_usd_price as float64) as total_revenue_usd
 from fact f
 left join d on d.date_key = f.date_key
 left join p on p.product_key = f.product_key

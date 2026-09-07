@@ -1,38 +1,54 @@
 version: 2
+
 models:
   - name: dim_date
     columns:
       - name: date_key
         tests: [unique, not_null]
+
   - name: dim_customer
     columns:
       - name: customer_key
         tests: [unique, not_null]
+
   - name: dim_product
     columns:
       - name: product_key
         tests: [unique, not_null]
+      - name: product_gender
+        tests:
+          - accepted_values:
+              values: ['Female', 'Male', 'Kids', 'Unknown']
+
   - name: dim_location
+    description: "Grain: 1 dong = 1 business location (country+region+city), KHONG phai 1 dong/IP."
     columns:
       - name: location_key
         tests: [unique, not_null]
+
   - name: dim_currency
     columns:
       - name: currency_key
         tests: [unique, not_null]
       - name: currency_code
         tests: [not_null]
+
   - name: dim_store
     columns:
       - name: store_key
         tests: [unique, not_null]
+
   - name: fact_exchange_rate
     columns:
       - name: exchange_rate_key
         tests: [unique, not_null]
       - name: rate_to_usd
         tests: [not_null]
+
   - name: fact_sales_order_detail
+    description: >
+      Grain: 1 dong = 1 cap (order_id, product_id) DUY NHAT sau dedupe.
+      Business key: order_id + product_id + item_index (KHONG con dung Mongo _id).
     columns:
       - name: detail_key
         tests: [unique, not_null]
