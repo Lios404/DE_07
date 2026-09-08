@@ -32,7 +32,7 @@ Tài liệu mô tả toàn bộ quá trình xây dựng data pipeline cho projec
             v
 [BigQuery dataset: raw_glamira]
      ├── raw_summary       (41,432,473 rows)
-     ├── raw_ip_location   (3,202,861 rows)
+     ├── raw_ip_location   (3,239,628 rows)
      └── raw_products      (18,925 rows)
 ```
 
