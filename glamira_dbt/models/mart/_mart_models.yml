@@ -1,6 +1,63 @@
 version: 2
+
 models:
   - name: mart_sales_order_detail
+    description: "Bang phang join san fact + toan bo dimension, phuc vu truc tiep Looker Studio."
+    config:
+      contract:
+        enforced: true
     columns:
       - name: detail_key
+        data_type: INT64
         tests: [unique, not_null]
+      - name: order_id
+        data_type: INT64
+      - name: order_timestamp
+        data_type: TIMESTAMP
+      - name: full_date
+        data_type: DATE
+      - name: year_number
+        data_type: INT64
+      - name: quarter_number
+        data_type: INT64
+      - name: month_number
+        data_type: INT64
+      - name: month_name
+        data_type: STRING
+      - name: day_name
+        data_type: STRING
+      - name: is_weekend
+        data_type: BOOL
+      - name: product_id
+        data_type: INT64
+      - name: product_name
+        data_type: STRING
+      - name: product_sku
+        data_type: STRING
+      - name: product_gender
+        data_type: STRING
+      - name: location_city_name
+        data_type: STRING
+      - name: location_region_name
+        data_type: STRING
+      - name: location_country_name
+        data_type: STRING
+      - name: location_country_code
+        data_type: STRING
+      - name: store_domain
+        data_type: STRING
+      - name: currency_code
+        data_type: STRING
+      - name: customer_key
+        data_type: INT64
+      - name: sales_amount
+        data_type: INT64
+      - name: sales_local_price
+        data_type: FLOAT64
+      - name: sales_usd_price
+        data_type: FLOAT64
+      - name: total_revenue_usd
+        data_type: FLOAT64
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0

@@ -1,0 +1,16 @@
+version: 2
+
+seeds:
+  - name: seed_currency_rates
+    description: "Bang tinh (khong phai lich su) mapping ky hieu tien te sang ma ISO + ty gia quy doi USD."
+    columns:
+      - name: currency_symbol
+        tests: [not_null, unique]
+      - name: currency_code
+        tests: [not_null]
+      - name: rate_to_usd
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              strictly: true

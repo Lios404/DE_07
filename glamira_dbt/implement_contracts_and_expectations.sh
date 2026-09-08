@@ -1,3 +1,11 @@
+#!/bin/bash
+set -e
+
+cd ~/glamira-pipeline/glamira_dbt
+
+echo "=== Cap nhat models/core/_core_models.yml (contract + dbt_expectations toan bo core layer) ==="
+
+cat > models/core/_core_models.yml << 'EOF'
 version: 2
 
 models:
@@ -275,6 +283,7 @@ models:
           - not_null
           - dbt_expectations.expect_column_values_to_be_between:
               min_value: 0
+              inclusive_min: false
 
   # ============================================================
   # FACT_SALES_ORDER_DETAIL
@@ -362,3 +371,116 @@ models:
       - dbt_expectations.expect_table_row_count_to_be_between:
           min_value: 30000
           max_value: 50000
+EOF
+
+echo "=== Tao models/mart/_mart_models.yml (contract cho lop BI-facing) ==="
+
+cat > models/mart/_mart_models.yml << 'EOF'
+version: 2
+
+models:
+  - name: mart_sales_order_detail
+    description: "Bang phang join san fact + toan bo dimension, phuc vu truc tiep Looker Studio."
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: detail_key
+        data_type: INT64
+        tests: [unique, not_null]
+      - name: order_id
+        data_type: INT64
+      - name: order_timestamp
+        data_type: TIMESTAMP
+      - name: full_date
+        data_type: DATE
+      - name: year_number
+        data_type: INT64
+      - name: quarter_number
+        data_type: INT64
+      - name: month_number
+        data_type: INT64
+      - name: month_name
+        data_type: STRING
+      - name: day_name
+        data_type: STRING
+      - name: is_weekend
+        data_type: BOOL
+      - name: product_id
+        data_type: INT64
+      - name: product_name
+        data_type: STRING
+      - name: product_sku
+        data_type: STRING
+      - name: product_gender
+        data_type: STRING
+      - name: location_city_name
+        data_type: STRING
+      - name: location_region_name
+        data_type: STRING
+      - name: location_country_name
+        data_type: STRING
+      - name: location_country_code
+        data_type: STRING
+      - name: store_domain
+        data_type: STRING
+      - name: currency_code
+        data_type: STRING
+      - name: customer_key
+        data_type: INT64
+      - name: sales_amount
+        data_type: INT64
+      - name: sales_local_price
+        data_type: FLOAT64
+      - name: sales_usd_price
+        data_type: FLOAT64
+      - name: total_revenue_usd
+        data_type: FLOAT64
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+EOF
+
+echo "=== Them seed test cho seed_currency_rates ==="
+
+cat > seeds/_seeds.yml << 'EOF'
+version: 2
+
+seeds:
+  - name: seed_currency_rates
+    description: "Bang tinh (khong phai lich su) mapping ky hieu tien te sang ma ISO + ty gia quy doi USD."
+    columns:
+      - name: currency_symbol
+        tests: [not_null, unique]
+      - name: currency_code
+        tests: [not_null]
+      - name: rate_to_usd
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              inclusive_min: false
+EOF
+
+echo "=== Them singular test: mart phai khop so dong voi fact (khong duoc lech do join sai) ==="
+
+mkdir -p tests
+cat > tests/assert_mart_matches_fact_row_count.sql << 'EOF'
+-- Test PASS neu KHONG tra ve dong nao.
+-- Xac nhan mart_sales_order_detail khong bi nhan doi/mat dong so voi fact
+-- (co the xay ra neu 1 dimension nao do vo tinh co key trung lap).
+with counts as (
+    select
+        (select count(*) from {{ ref('fact_sales_order_detail') }}) as fact_count,
+        (select count(*) from {{ ref('mart_sales_order_detail') }}) as mart_count
+)
+select *
+from counts
+where fact_count != mart_count
+EOF
+
+echo "=========================================="
+echo "DA CAP NHAT XONG. Buoc tiep theo:"
+echo "1. dbt deps  (neu chua chay)"
+echo "2. dbt build --full-refresh"
+echo "=========================================="
