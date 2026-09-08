@@ -222,7 +222,7 @@ Script `bigquery_data_profiling.py` — kiểm tra trên BigQuery raw layer:
 | Bảng | Số dòng | product_id type |
 |---|---|---|
 | `raw_summary` | 41,432,473 | STRING |
-| `raw_ip_location` | 3,202,861 | — |
+| `raw_ip_location` | 3,239,628 | — |
 | `raw_products` | 18,925 | STRING (đã sửa từ INT64) |
 
 ---
