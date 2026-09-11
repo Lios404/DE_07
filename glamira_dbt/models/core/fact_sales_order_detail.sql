@@ -6,46 +6,51 @@
         on_schema_change='fail'
     )
 }}
-
-with cart_items as (
+ 
+with fact_sales_order_detail_cart_items as (
     select * from {{ ref('stg_checkout_success_cart_items') }}
     {% if is_incremental() %}
         where order_date >= date_sub(current_date(), interval 3 day)
     {% endif %}
 ),
-
-rates as (
+ 
+fact_sales_order_detail_rates as (
     select distinct currency_code, rate_to_usd
     from {{ ref('seed_currency_rates') }}
 ),
-
-valid_locations as (
-    select location_key from {{ ref('dim_location') }}
+ 
+fact_sales_order_detail_location as (
+    select ip_address, location_key from {{ ref('stg_location') }}
 ),
-
-valid_currencies as (
-    select currency_key from {{ ref('dim_currency') }}
+ 
+fact_sales_order_detail_currency as (
+    select currency_key, currency_code from {{ ref('dim_currency') }} where currency_key != -1
 ),
-
-final as (
+ 
+fact_sales_order_detail_store as (
+    select store_id, store_key from {{ ref('stg_store') }}
+),
+ 
+fact_sales_order_detail_product as (
+    select product_id, product_key from {{ ref('stg_products') }}
+),
+ 
+fact_sales_order_detail_final as (
     select
-        -- BUSINESS KEY - khong con dung Mongo _id, dung order_id (business identifier that)
         farm_fingerprint(concat(
             cast(ci.order_id as string), '-',
             cast(ci.product_id as string), '-',
             cast(ci.item_index as string)
         )) as detail_key,
-
-        -- key phu cho join/dedupe logic theo cap order+product
+ 
         farm_fingerprint(concat(cast(ci.order_id as string), '-', cast(ci.product_id as string))) as order_product_key,
-
-        coalesce(farm_fingerprint(ci.user_id_db), -1) as customer_key,
-        coalesce(farm_fingerprint(cast(ci.product_id as string)), -1) as product_key,
-
-        coalesce(vl.location_key, -1) as location_key,
-        coalesce(vc.currency_key, -1) as currency_key,
-        coalesce(farm_fingerprint(ci.store_id), -1) as store_key,
-
+ 
+        coalesce(ci.customer_key, -1) as customer_key,
+        coalesce(p.product_key, -1) as product_key,
+        coalesce(loc.location_key, -1) as location_key,
+        coalesce(cur.currency_key, -1) as currency_key,
+        coalesce(st.store_key, -1) as store_key,
+ 
         ci.order_id,
         cast(format_timestamp('%Y%m%d', ci.event_timestamp) as int64) as date_key,
         ci.local_time,
@@ -58,20 +63,13 @@ final as (
         'dbt' as inserted_by,
         current_timestamp() as updated_date,
         'dbt' as updated_by
-
-    from cart_items ci
-    left join {{ ref('stg_location') }} loc
-        on loc.ip_address = ci.ip
-    left join rates r
-        on r.currency_code = ci.currency_code
-    left join valid_locations vl
-        on vl.location_key = farm_fingerprint(concat(
-            coalesce(loc.country_code, 'UNK'), '-',
-            coalesce(loc.region_name, 'UNK'), '-',
-            coalesce(loc.city_name, 'UNK')
-        ))
-    left join valid_currencies vc
-        on vc.currency_key = farm_fingerprint(ci.currency_code)
+ 
+    from fact_sales_order_detail_cart_items ci
+    left join fact_sales_order_detail_location loc on loc.ip_address = ci.ip
+    left join fact_sales_order_detail_currency cur on cur.currency_code = ci.currency_code
+    left join fact_sales_order_detail_store st on st.store_id = ci.store_id
+    left join fact_sales_order_detail_product p on p.product_id = ci.product_id
+    left join fact_sales_order_detail_rates r on r.currency_code = ci.currency_code
 )
-
-select * from final
+ 
+select * from fact_sales_order_detail_final

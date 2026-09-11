@@ -33,7 +33,14 @@ models:
   glamira_dbt:
     staging:
       +materialized: view
+      +schema: glamira_stg
     core:
       +materialized: table
+      +schema: glamira_core
     mart:
       +materialized: table
+      +schema: glamira_mart
+
+seeds:
+  glamira_dbt:
+    +schema: glamira_stg

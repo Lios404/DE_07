@@ -9,3 +9,5 @@ failed_products.csv
 crawl_log.log
 product_urls_to_crawl.csv
 ip_locations.csv
+ip_location_delta.jsonl
+*.jsonl
